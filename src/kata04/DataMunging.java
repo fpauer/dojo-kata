@@ -55,9 +55,10 @@ public class DataMunging {
     private String rootPath = System.getProperty("user.dir");
     private String appPath = "/src/kata04/";
     private String filePath;
-    private List<Float[]> result;
+    private float[] result = new float[3];
 
     public DataMunging (String filePath) {
+        result = new float[]{0, Float.MAX_VALUE, Float.MIN_VALUE};
         this.filePath = rootPath.concat(appPath.concat(filePath));
         if (!new File(this.filePath).exists()) {
             throw new InvalidFileException("Please provide a valid file path.");
@@ -65,28 +66,35 @@ public class DataMunging {
     }
 
     public void map() {
-        result = new ArrayList<>(31);
 
         try (BufferedReader br = new BufferedReader(new FileReader(filePath))) {
 
             String line;
             while ((line = br.readLine()) != null) {
-                Float[] row = new Float[3];
+                float[] row = new float[3];
                 int column = 0;
 
                 String[] cells = line.split(" ");
                 for (String cell: cells) {
                     if (column<3) {
                         cell = cell.trim();
-                        if (!cell.isEmpty() && isNumeric(cell)) {
-                            row[column++] = Float.valueOf(cell);
+                        if (!cell.isEmpty()) {
+                            cell = cell.replaceAll("[*]", "");
+                            if (isNumeric(cell)) {
+                                row[column++] = Float.valueOf(cell);
+                            } else if (column == 0) {
+                                break;
+                            }
                         }
                     }
                 }
 
                 if (column>0) {
-                    System.out.println(Arrays.toString(row));
-                    result.add(row);
+                    float spreadRow = row[1] - row[2];
+                    float spreadResult = result[1] - result[2];
+                    if (spreadRow < spreadResult) {
+                        result = row;
+                    }
                 }
             }
 
@@ -95,7 +103,7 @@ public class DataMunging {
         }
     }
 
-    public List<Float[]> getResult() {
+    public float[] getResult() {
         return result;
     }
 

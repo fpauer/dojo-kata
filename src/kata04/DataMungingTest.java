@@ -25,7 +25,7 @@ class DataMungingTest {
     String appPath = "/src/kata04/";
     File file;
     DataMunging munging;
-    List result;
+    float[] result;
 
     /*
         Part One: Weather Data
@@ -68,32 +68,37 @@ class DataMungingTest {
     @Nested
     class TestWeatherData {
 
-        Float[] firstRow;
-
         TestWeatherData() {
             munging = new DataMunging("weather.dat");
             munging.map();
             result = munging.getResult();
-            firstRow = (Float[])result.get(0);
         }
 
         @Test
         @DisplayName("should getData not be empty")
         void dataNotEmptyTest() {
-            assertTrue(result.size()>0);
+            assertNotNull(result);
+            assertTrue(result.length == 3);
         }
 
         @Test
         @DisplayName("should have the day number in the first column")
         void data1stColumnTest() {
-            assertEquals(firstRow[0].intValue(), 1.0);
+            assertTrue(result[0] >= 1.0 && result[0] <= 31.0);
         }
 
         @Test
         @DisplayName("should have maximum temperature column as second and bigger then the third")
         void dataColumnTests() {
-            assertEquals(firstRow[1].intValue(), 88.0);
-            assertTrue(firstRow[1] > firstRow[2]);
+            assertTrue(result[1] > result[2]);
+        }
+
+        @Test
+        @DisplayName("should output the smallest temperature spread")
+        void smallestTemperatureTest() {
+            assertEquals(14.0, result[0]);
+            assertEquals(61.0, result[1]);
+            assertEquals(59.0, result[2]);
         }
     }
 }
