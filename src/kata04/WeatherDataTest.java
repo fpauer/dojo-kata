@@ -1,11 +1,12 @@
 package kata04;
 
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
+import org.junit.jupiter.api.Test;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Arrays;
-import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -19,12 +20,12 @@ import static org.junit.jupiter.api.Assertions.*;
 
  Here’s an exercise in three parts to do with real world data. Try hard not to read ahead—do each part in turn.
  */
-class DataMungingTest {
+class WeatherDataTest {
 
     String rootPath = System.getProperty("user.dir");
     String appPath = "/src/kata04/";
     File file;
-    DataMunging munging;
+    WeatherData data;
     float[] result;
 
     /*
@@ -36,8 +37,8 @@ class DataMungingTest {
     @Test
     @DisplayName("Weather Data")
     void testWeatherData() {
-        Throwable exception = assertThrows(DataMunging.InvalidFileException.class, () -> {
-            new DataMunging("file.dat");
+        Throwable exception = assertThrows(WeatherData.InvalidFileException.class, () -> {
+            new WeatherData("file.dat");
         });
         assertEquals("Please provide a valid file path.", exception.getMessage());
     }
@@ -60,7 +61,6 @@ class DataMungingTest {
         @DisplayName("should file weather.dat not be empty")
         void emptyWeatherFile() {
             assertTrue(file.length()>0);
-            // assertThrows(EmptyStackException.class, () -> stack.peek());
         }
     }
 
@@ -69,9 +69,9 @@ class DataMungingTest {
     class TestWeatherData {
 
         TestWeatherData() {
-            munging = new DataMunging("weather.dat");
-            munging.map();
-            result = munging.getResult();
+            data = new WeatherData("weather.dat");
+            data.map();
+            result = data.getResult();
         }
 
         @Test

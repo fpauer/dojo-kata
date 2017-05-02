@@ -1,13 +1,9 @@
 package kata04;
 
-import java.io.*;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Stream;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 
 /**
  * Created by fernandopauer on 3/22/17.
@@ -45,38 +41,38 @@ import java.util.stream.Stream;
  because of this requirement? How about the maintainability?
  */
 
-public abstract class DataMunging {
+public class FootballData extends DataMunging{
 
-    public class InvalidFileException extends RuntimeException {
-        public InvalidFileException(String message) { super(message); }
-        public InvalidFileException(String message, Exception e) { super(message, e); }
+    private String result = "";
+
+    public FootballData (String filePath) {
+        super(filePath);
     }
 
-    private String rootPath = System.getProperty("user.dir");
-    private String appPath = "/src/kata04/";
-    protected String filePath;
 
-    public DataMunging (String filePath) {
-        this.filePath = rootPath.concat(appPath.concat(filePath));
-        if (!new File(this.filePath).exists()) {
-            throw new InvalidFileException("Please provide a valid file path.");
+    public void clearResult() {
+        result = "";
+    }
+
+    public void reduce(BufferedReader br) throws IOException {
+        String line;
+        int min = Integer.MAX_VALUE;
+        while ((line = br.readLine()) != null) {
+            String goalFor = line.substring(43,45).trim();
+            String goalAgainst = line.substring(50,52).trim();
+
+            if (isNumeric(goalFor) && isNumeric(goalAgainst)) {
+                int diff = Math.abs(Integer.valueOf(goalFor) - Integer.valueOf(goalAgainst));
+                if (diff < min) {
+                    min = diff;
+                    result = line.substring(7,22).trim();
+                }
+            }
         }
     }
 
-    public void map() {
-        clearResult();
-        try (BufferedReader br = new BufferedReader(new FileReader(this.filePath))) {
-            reduce(br);
-        } catch (IOException e) {
-            throw new DataMunging.InvalidFileException("", e);
-        }
+    public String getResult() {
+        return result;
     }
 
-    public abstract void clearResult();
-    public abstract void reduce(BufferedReader br) throws IOException;
-    public abstract Object getResult();
-
-    public boolean isNumeric(String s) {
-        return s.matches("[-+]?\\d*\\.?\\d+");
-    }
 }
