@@ -14,6 +14,8 @@ public class BalancedParenthesis {
     String closeParenthesis = ")}]";
 
     public boolean isBalanced (String string) {
+        if (string == null) throw new NullPointerException("string is null");
+
         char[] charArray = string.toCharArray();
         Stack<Character> checker = new Stack<>();
 
